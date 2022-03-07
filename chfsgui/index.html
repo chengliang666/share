@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+
+    <link rel="icon" href="asset/images/logo.jpg" type="image/jpeg">
+
+    
+    <link rel="stylesheet" href="asset/bootstrap/3.3.7/bootstrap.min.css">
+
+    
+    <link href="asset/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    
+    <link href="asset/css/chfs.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="asset/jquery-confirm/3.3.4/jquery-confirm.min.css">
+
+    
+    
+    <script src="asset/js/ie-emulation-modes-warning.js"></script>
+	
+	<script src="asset/js/clipboard.min.js"></script>
+
+    
+    
+</head>
+
+<body>
+    <div class="container" id="maincontainer" style="background-color: #fafafa;padding-top: 20px;padding-bottom: 20px;">
+        
+
+<div class="row">
+    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-6"> 
+		<!-- <div class="row"> -->
+			<label id="uploadBtn" class="wrOptBtns btn btn-default btn-sm col-lg-1 col-md-1 col-sm-2" style="margin:0px 4px 4px 0px;"><span set-lan="text:UploadFiles">上传文件</span><input id="uploadFileInput" class="hide" type="file" multiple /></label>
+			<label id="uploadDirBtn" class="wrOptBtns btn btn-default btn-sm col-lg-1 col-md-1 col-sm-2" style="margin:0px 4px 4px 0px;" ><span set-lan="text:UploadDir">上传目录</span><input id="uploadDirInput" class="hide" type="file" webkitdirectory  /></label>
+			<button id="createTextBtn" type="button" class="wrOptBtns btn btn-default btn-sm col-lg-1 col-md-1 col-sm-2" style="margin:0px 4px 4px 0px;" title="快速创建文本文件" set-lan="title:CreateTextTip"><span set-lan="text:CreateText">新建文本</span></button>
+			<button id="createdirBtn" type="button" class="wrOptBtns btn btn-default btn-sm col-lg-1 col-md-1 col-sm-2" style="margin:0px 4px 4px 0px;" set-lan="html:CreateDir">新建目录</button>
+			<div id="searchCtrl"  class="input-group input-group-sm col-lg-3 col-md-3 col-sm-5" >
+				<input type="text" id="searchText" class="form-control" placeholder="搜索当前页面..." set-lan="placeholder:SearchPlaceHolder">
+				<span class="input-group-btn">
+					<span id="btnSearch" class="btn btn-default" ><i class="glyphicon glyphicon-search"></i></span>
+					<span id="searchMenuBtn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="glyphicon glyphicon-menu-down"></span>
+						<span class="sr-only"></span>
+					</span>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:void(0)" onclick="changeSearchMode(1)"><span set-lan="text:searchMenuLocal">在当前页面中搜索</span></a></li>
+						<li><a href="javascript:void(0)" onclick="changeSearchMode(2)"><span set-lan="text:searchMenuGlobal">在整个服务器中搜索</span></a></li>
+					</ul>
+				</span>
+			</div><!-- /input-group -->
+		<!-- </div> -->
+	</div>
+	<div class="col-lg-1 col-md-1 col-sm-1 col-xs-6 text-right">
+        <button id="userBtn" type="button" class="btn btn-default btn-sm" set-lan="html:Login">登录</button>		
+    </div>
+</div>
+<!-- /.row -->
+
+<ol id="breadcrumb" class="breadcrumb mybc">
+	<li set-lan="html:RootPath">根目录</li>
+</ol>
+
+<div class="table-responsive">
+    <table id="table" class="table table-hover" style="word-break: break-all;">
+	    <col id="nameCol"/>
+        <col id="sizeCol"/>
+		<col id="timeCol"/>
+		<col id="handleCol"/>
+        <thead>
+            <tr>
+                <th class="fileitemTr" set-lan="html:ColumnFile">文件</th>
+                <th class="fileitemTr" set-lan="html:ColumnSize">大小</th>
+                <th class="fileitemTr" set-lan="html:ColumnModifyTime">修改时间</th>
+                <th class="fileitemTr" set-lan="html:ColumnOperation">操作</th>
+            </tr>
+        </thead>
+        <tbody id="filelist">
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+		
+            <div class="modal-body">
+                <div id="qrcode"></div>
+            </div>
+
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-12 text-center">
+                        <button type="button" id="btnCopyDlLink" class="btn btn-info" data-clipboard-text="" set-lan="html:CopyLink">复制链接</button>
+						<button type="button" id="btnClose" class="btn btn-primary" data-dismiss="modal" set-lan="html:CloseWindow">关闭窗口</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="progressModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" set-lan="html:FileUploadWndCaption">文件上传</h4>
+            </div>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="loginModal" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title" id="loginTitle" set-lan="html:LoginWndCaption">用户登录</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">			
+					<div class="form-group">
+						<div class="col-xs-12">
+							<div class="input-group">
+								<label class="input-group-addon" id="loginUserLabel" set-lan="html:UserName">用户:</label>
+								<input class="form-control" id="userInput" autofocus="autofocus" autoComplete="username" />
+							</div>					
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-12">
+							<div class="input-group">
+								<label class="input-group-addon" id="loginPwdLabel" set-lan="html:Password">密码:</label>
+								<input type="password" class="form-control" id="pwdInput" autoComplete="current-password" />
+							</div>							
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-12">						
+						</div>
+					</div>
+					<div class="form-group"> 
+						<div class="col-xs-12 text-center">
+							<button id="btnLogin" type="button"  class="btn btn-block btn-primary" set-lan="html:Login">登录</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+        <footer class="footer fileitemTr">			
+			<div>
+				<div align="left" style="float:left">
+				    <p>v2.0
+		                
+            		</p>
+				</div>
+				<div align="right">
+                   
+                    &nbsp;
+                	<a href="/contact" target="_blank" set-lan="html:Contact">联系</a>
+					&nbsp;
+                	<a href="/donate" target="_blank" set-lan="html:Donate">捐助</a>
+				</div>
+			</div>
+
+            
+        
+        </footer>
+
+    </div>
+    
+	
+	
+	<script src="asset/js/jquery.min.js"></script>
+    
+    <script src="asset/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="asset/bootstrap/3.3.7/bootstrap.min.js"></script>
+    <script src="asset/js/cookies.js"></script>
+    <script src="asset/js/qrcode.min.js"></script>
+    <script src="asset/js/uppie.min.js"></script>   
+    <script src="asset/js/in18.min.js"></script>  
+    <script src="asset/js/chfs.min.js"></script>   
+    <script src="asset/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+	
+
+    <script>
+        $(function() {
+            var path = window.location.pathname;
+            if (path.endsWith("contact")) {
+                $(document).attr('title','联系 - Cute File Explorer');
+            } else if (path.endsWith("donate")) {
+                $(document).attr('title','捐助 - Cute File Explorer');
+            } else {
+                $(document).attr('title','Cute File Explorer');
+            }
+
+            $(window).bind('hashchange', list).trigger('hashchange');
+        });
+
+        var sortIndex = "1", 
+            sortDirectionClass = "sort_asc",
+            latestIndex = localStorage.getItem("sortColumn"), 
+            latestDirectionClass = localStorage.getItem("sortDirectionClass");
+        if(latestIndex){ sortIndex = latestIndex; }
+        if(latestDirectionClass){ sortDirectionClass = latestDirectionClass; }
+        $('#table').find('thead th:nth-child(' + sortIndex + ')').addClass(sortDirectionClass);
+        $('#table').tablesorter();	
+
+        var username = getCookie("user");
+        if (username) {
+            $('#userBtn').html("<i style=\"color:ForestGreen\">" + username + "</i>");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+$columns_delay = (.1 .4 .9 2.3 .8 3.2 2 3 1.5 4.5 4 1.7 1 2.7 .7 2.7)
+$rain-color = #1DE61D
+
+body
+  background-color: black
+  overflow: hidden
+
+h1, h2, h3, h4
+  left: 10%
+  letter-spacing: 10px
+  position: absolute
+  top: 0
+  white-space: nowrap
+  writing-mode: vertical-lr
+
+.col1
+  left: 4.5%
+
+.col2
+  left: 5%
+  text-orientation: upright
+
+.col3
+  left: 15%
+  text-orientation: upright
+  
+.col4
+  left: 24%
+
+.col5
+  left: 25%
+
+.col6
+  left: 26%
+
+.col7
+  left: 30%
+  
+.col8
+  left: 35%
+  
+.col9
+  left: 45%
+
+.col10
+  left: 46%
+
+.col11
+  left: 50%
+
+.col12
+  left: 55%
+  
+.col13
+  left: 65%
+
+.col14
+  left: 73%
+
+.col15
+  left: 75%
+  
+.col16
+  left: 85%
+
+@keyframes doTheMatrix
+  0%
+    color: white
+    opacity: 1
+  15%
+    color: $rain-color
+  80%
+    opacity: 0
+
+for colNumber in (1..16)
+  .col{colNumber} > span
+    animation-iteration-count: infinite
+    animation-name: doTheMatrix
+    animation-timing-function: linear
+    opacity: 0
+  
+for colNumber in (1..16)
+  for charNumber in (1..33)
+    .col{colNumber} > .char{charNumber}
+      animation-delay: ($columns_delay[colNumber - 1] + (charNumber / 10))s
+      animation-duration: 3s
